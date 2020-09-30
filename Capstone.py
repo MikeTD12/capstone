@@ -9,7 +9,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 import seaborn as sns
 
 from sklearn.compose import make_column_transformer
