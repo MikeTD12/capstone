@@ -3,7 +3,7 @@
 
 # # Importing necessary libraries & data, setting pandas' display options.
 
-# In[21]:
+# In[40]:
 
 
 import pandas as pd
@@ -25,7 +25,7 @@ from sklearn.metrics import precision_recall_curve, precision_score, recall_scor
 import streamlit as st
 
 
-# In[68]:
+# In[41]:
 
 
 c = pd.read_csv('courses.csv') #merged - cla
@@ -34,10 +34,10 @@ sa = pd.read_csv('studentAssessment.csv') #merged - stu_a
 si = pd.read_csv('studentInfo.csv') #merged - s
 sr = pd.read_csv('studentRegistration.csv') #merged - s
 vle = pd.read_csv('vle.csv') #merged - cla
-svle = pd.read_csv('student_svle_clean.csv.zip') #merged - cla
+svle = pd.read_csv('student_svle_clean.csv') #merged - cla
 
 
-# In[23]:
+# In[3]:
 
 
 pd.set_option('display.max_columns', 500)
@@ -45,70 +45,70 @@ pd.set_option('display.max_columns', 500)
 
 # # Merging & cleaning data
 
-# In[24]:
+# In[4]:
 
 
 # This field in the student information table has no value as an integar. Converting it to a string.
 si['id_student'] = si.id_student.astype('str')
 
 
-# In[26]:
+# In[5]:
 
 
 # Merging the two virtual learning environment tables, to create a new table "Learning Activity (la)".
 la = pd.merge(svle, vle, how='left', on='id_site')
 
 
-# In[27]:
+# In[6]:
 
 
 # Merging the courses table to create new table "Course Learning Activity (cla)".
 cla = pd.merge(la, c, on=['code_module', 'code_presentation'], how='left')
 
 
-# In[28]:
+# In[7]:
 
 
 # Dropping two fields that don't contain enough data and useful meaning.
 cla.drop(labels=['week_from', 'week_to'], axis=1, inplace=True)
 
 
-# In[29]:
+# In[8]:
 
 
 # This field in the student registration table has no value as an integar. Converting it to a string.
 sr['id_student'] = sr.id_student.astype('str')
 
 
-# In[30]:
+# In[9]:
 
 
 # Merging student information & registration into one table, "Students (s)"
 s = pd.merge(si, sr, on=['code_module', 'code_presentation', 'id_student'])
 
 
-# In[31]:
+# In[10]:
 
 
 # Merging student assessments with the assessments lookup table to retrieve assessment type & weight.
 stu_a = pd.merge(sa, a, how='left', on='id_assessment')
 
 
-# In[32]:
+# In[11]:
 
 
 # Filtering the course learning activity table to include the first 54 days of activity in course (20%)
 c = cla[cla.date <= 54]
 
 
-# In[33]:
+# In[12]:
 
 
 # Grouping the course learning activity table in order to aggregate clicks on activity type.
 cg = c.groupby(['code_module', 'code_presentation', 'id_student', 'activity_type']).sum_click.sum().reset_index()
 
 
-# In[34]:
+# In[13]:
 
 
 # Pivoting table to create features at the activity type level.
@@ -116,27 +116,27 @@ cp = pd.pivot_table(cg, values='sum_click', index=['code_module', 'code_presenta
                columns='activity_type', aggfunc='sum').reset_index()
 
 
-# In[35]:
+# In[14]:
 
 
 # filling NaN with 0, as that is what NaN represents in this case.
 cp = cp.fillna(0)
 
 
-# In[36]:
+# In[15]:
 
 
 # Filtering the students table to exclude courses withdrawn before day 55 of course.
 s = s[(s.date_unregistration > 54) | (s.date_unregistration.isna())]
 
 
-# In[37]:
+# In[16]:
 
 
 cp['id_student'] = cp.id_student.astype('str')
 
 
-# In[38]:
+# In[17]:
 
 
 # Merging for a final time to create the dataframe that will be used in my ML model.
@@ -145,26 +145,26 @@ df = pd.merge(s, cp, on=['code_module', 'code_presentation', 'id_student'])
 
 # # Featuring Engineering
 
-# In[39]:
+# In[18]:
 
 
 # Dropping the withdrawal date field, as to avoid data leakage in my model.
 df.drop(columns='date_unregistration', inplace=True)
 
 
-# In[40]:
+# In[19]:
 
 
 df.rename(columns={'final_result': 'target'}, inplace=True)
 
 
-# In[41]:
+# In[20]:
 
 
 df['target'] = df.target.apply(lambda x: 1 if x in ['Distinction', 'Pass'] else 0)
 
 
-# In[42]:
+# In[21]:
 
 
 df.drop(columns='id_student', inplace=True)
@@ -172,7 +172,7 @@ df.drop(columns='id_student', inplace=True)
 
 # # Train, Test, Split & Feature Encoding
 
-# In[43]:
+# In[22]:
 
 
 X = df.drop(['target'], axis=1)
@@ -181,7 +181,7 @@ y = df['target']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state=25)
 
 
-# In[44]:
+# In[23]:
 
 
 enc = TargetEncoder(cols=['code_module', 'code_presentation', 'region', 'highest_education',
@@ -190,7 +190,7 @@ data_train = enc.fit_transform(X_train, y_train)
 data_test = enc.transform(X_test)
 
 
-# In[45]:
+# In[24]:
 
 
 ohe = OneHotEncoder(cols=['gender', 'disability'], drop_invariant=True)
@@ -198,7 +198,7 @@ data_train = ohe.fit_transform(data_train, y_train)
 data_test = ohe.transform(data_test)
 
 
-# In[46]:
+# In[25]:
 
 
 data_train1 = data_train.columns
@@ -207,7 +207,7 @@ data_train2 = data_train.copy()
 
 # # XGBoost
 
-# In[47]:
+# In[26]:
 
 
 import xgboost as xgb
@@ -228,7 +228,7 @@ training_preds = xgb.predict(data_train)
 y_pred = xgb.predict(data_test)
 
 
-# In[48]:
+# In[27]:
 
 
 training_accuracy = accuracy_score(y_train, training_preds)
@@ -240,7 +240,7 @@ print("Training Accuracy: {:.4}%".format(training_accuracy * 100))
 print("Validation accuracy: {:.4}%".format(val_accuracy * 100))
 
 
-# In[49]:
+# In[28]:
 
 
 print('\nConfusion Matrix')
@@ -248,13 +248,13 @@ print('----------------')
 pd.crosstab(y_test, y_pred, rownames=['Actual'], colnames=['Predicted'], margins=True)
 
 
-# In[50]:
+# In[29]:
 
 
 print(classification_report(y_test, y_pred))
 
 
-# In[51]:
+# In[30]:
 
 
 from xgboost import plot_importance
@@ -268,7 +268,7 @@ plot_features(xgb, (12,10));
 
 # # Grid Search
 
-# In[112]:
+# In[31]:
 
 
 param_grid = {
@@ -282,7 +282,7 @@ param_grid = {
 }
 
 
-# In[113]:
+# In[32]:
 
 
 '''import xgboost as xgb
@@ -313,11 +313,17 @@ print(f'Null score: {ns}')
 print(classification_report(y_test, val_preds))'''
 
 
-# In[118]:
+# In[33]:
 
 
 st.title('Open University - machine learning')
 st.dataframe(df, 10000, 700)
+
+
+# In[34]:
+
+
+df
 
 
 # In[ ]:
