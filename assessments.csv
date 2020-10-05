@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-version https://git-lfs.github.com/spec/v1
-oid sha256:8cc738fb88ad760571d6f2a23059bfee0ffcae3bcd830514c9cbd5c6d5a046f1
-size 8200
-=======
 "code_module","code_presentation","id_assessment","assessment_type","date","weight"
 "AAA","2013J","1752","TMA","19","10"
 "AAA","2013J","1753","TMA","54","20"
@@ -210,4 +205,3 @@ size 8200
 "GGG","2014J","37436","TMA","124","0"
 "GGG","2014J","37437","TMA","173","0"
 "GGG","2014J","37444","Exam","229","100"
->>>>>>> b61ad7462e3878d041f8cd31aed0aeabe4e032d6

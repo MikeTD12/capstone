@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-version https://git-lfs.github.com/spec/v1
-oid sha256:7e6f3e474a5eee00639d2a414a6c7e928745823c2d2c2563ca1780145f99b0d6
-size 3461652
-=======
 "code_module","code_presentation","id_student","gender","region","highest_education","imd_band","age_band","num_of_prev_attempts","studied_credits","disability","final_result"
 "AAA","2013J","11391","M","East Anglian Region","HE Qualification","90-100%","55<=","0","240","N","Pass"
 "AAA","2013J","28400","F","Scotland","HE Qualification","20-30%","35-55","0","60","N","Pass"
@@ -32597,4 +32592,3 @@ size 3461652
 "GGG","2014J","2648187","F","South Region","A Level or Equivalent","20-30%","0-35","0","30","Y","Pass"
 "GGG","2014J","2679821","F","South East Region","Lower Than A Level","90-100%","35-55","0","30","N","Withdrawn"
 "GGG","2014J","2684003","F","Yorkshire Region","HE Qualification","50-60%","35-55","0","30","N","Distinction"
->>>>>>> b61ad7462e3878d041f8cd31aed0aeabe4e032d6

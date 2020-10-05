@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-version https://git-lfs.github.com/spec/v1
-oid sha256:0d32676285372aaf2e7a80304e5b274b4fba24313e2ca4c04317225e1ec90170
-size 1109984
-=======
 "code_module","code_presentation","id_student","date_registration","date_unregistration"
 "AAA","2013J","11391","-159",""
 "AAA","2013J","28400","-53",""
@@ -32597,4 +32592,3 @@ size 1109984
 "GGG","2014J","2648187","-129",""
 "GGG","2014J","2679821","-49","101"
 "GGG","2014J","2684003","-28",""
->>>>>>> b61ad7462e3878d041f8cd31aed0aeabe4e032d6
